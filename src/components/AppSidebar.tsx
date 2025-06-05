@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
@@ -13,7 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface NavItemProps {
   icon: React.ComponentType<{ className?: string }>;
@@ -46,7 +46,7 @@ export default function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const { toast } = useToast();
-  const { logout, user } = useAuth();
+  const navigate = useNavigate();
   
   const navItems = [
     { icon: Home, label: "Dashboard", href: "/dashboard" },
@@ -57,11 +57,11 @@ export default function AppSidebar() {
   ];
 
   const handleLogout = () => {
-    logout();
     toast({
       title: "Logged out successfully",
       description: "You have been logged out of your account.",
     });
+    navigate("/");
   };
 
   return (
@@ -74,8 +74,11 @@ export default function AppSidebar() {
       <div className="flex items-center h-16 px-4 border-b">
         <div className="flex items-center gap-2 font-semibold w-full">
           {!isCollapsed && (
-            <div className="font-bold text-xl">
-              <span className="text-primary">Tango</span>
+            <div className="font-bold text-xl relative overflow-hidden">
+              <span className="text-2xl font-bold bg-gradient-to-r from-teal-400 to-purple-700 bg-clip-text text-transparent">
+                Tango
+              </span>
+
             </div>
           )}
           <Button 
@@ -105,11 +108,6 @@ export default function AppSidebar() {
       </div>
       
       <div className="p-2 mt-auto border-t">
-        {!isCollapsed && (
-          <div className="px-3 py-2 text-sm text-muted-foreground">
-            {user?.name}
-          </div>
-        )}
         <Button
           variant="ghost"
           className={cn(

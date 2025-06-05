@@ -1,10 +1,10 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/AuthContext";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +37,6 @@ const formSchema = z.object({
 export default function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,28 +47,32 @@ export default function Login() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    try {
-      await login(values.email, values.password);
-      toast.success("Login successful!");
-    } catch (error) {
-      form.setError("email", { 
-        type: "manual", 
-        message: "Invalid email or password" 
-      });
-      form.setError("password", { 
-        type: "manual", 
-        message: "Invalid email or password" 
-      });
-      toast.error("Invalid email or password");
-    } finally {
+    
+    // Simulating an API call
+    setTimeout(() => {
+      // In a real app, you'd check credentials against your backend
+      if (values.email === "demo@example.com" && values.password === "password123") {
+        toast.success("Login successful!");
+        navigate("/dashboard");
+      } else {
+        form.setError("email", { 
+          type: "manual", 
+          message: "Invalid email or password" 
+        });
+        form.setError("password", { 
+          type: "manual", 
+          message: "Invalid email or password" 
+        });
+        toast.error("Invalid email or password");
+      }
       setIsLoading(false);
-    }
+    }, 1500);
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary p-4">
       <div className="w-full max-w-md">
         <Card className="w-full">
           <CardHeader className="space-y-1">
